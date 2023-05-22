@@ -1,8 +1,19 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-ethers")
-require("@nomiclabs/hardhat-waffle")
+// require("hardhat-deploy-ethers");
+require("@nomicfoundation/hardhat-chai-matchers")
+require('hardhat-abi-exporter');
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.18",
+  abiExporter: {
+    path: './frontend/src/abi'
+  },
+  networks: {
+    hardhat: {
+      chainId: 1337
+    },
+  }
 };
+
