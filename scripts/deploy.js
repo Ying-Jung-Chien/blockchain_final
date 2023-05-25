@@ -6,6 +6,7 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 const IPFS = require('ipfs-http-client');
+const { ethers } = require("hardhat");
 require('dotenv').config();
 
 // async function main() {
@@ -34,29 +35,39 @@ require('dotenv').config();
 // });
 
 async function main() {
-  const accounts = [
-    { username: "user1", password: "password1", role: "admin", id: "012345" },
-    { username: "user2", password: "password2", role: "teacher", id: "123456" },
-    { username: "user3", password: "password3", role: "student", id: "234567" },
-  ];
+  // const accounts = [
+  //   { username: "user1", password: "password1", role: "admin", id: "012345" },
+  //   { username: "user2", password: "password2", role: "teacher", id: "123456" },
+  //   { username: "user3", password: "password3", role: "student", id: "234567" },
+  // ];
+  // const accounts = { username: "admin", password: "root12345", role: "admin", id: "012345" };
 
-  const projectId = process.env.REACT_APP_PROJECT_ID;
-  const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
-  const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
+  // const projectId = process.env.REACT_APP_PROJECT_ID;
+  // const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
+  // const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
   
-  const ipfs = IPFS.create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    headers: {
-      authorization: auth,
-    }
-  });
-  const cid = await ipfs.add(JSON.stringify(accounts));
+  // const ipfs = IPFS.create({
+  //   host: 'ipfs.infura.io',
+  //   port: 5001,
+  //   protocol: 'https',
+  //   headers: {
+  //     authorization: auth,
+  //   }
+  // });
+  // const cid = await ipfs.add(JSON.stringify(accounts));
   // console.log(typeof(cid.path));
 
+  const username = "admin";
+  const password = "root12345";
+
+  const hashUsername = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(username));
+  const hashPassword = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(password));
+
+  const bytes32Name = ethers.utils.hexZeroPad(hashUsername, 32);
+  const bytes32Password = ethers.utils.hexZeroPad(hashPassword, 32);
+
   const Account = await hre.ethers.getContractFactory("Account");
-  const account = await Account.deploy(cid.path);
+  const account = await Account.deploy(bytes32Name, bytes32Password);
   await account.deployed();
   console.log(account.address);
 
