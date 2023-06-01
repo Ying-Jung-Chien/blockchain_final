@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
-import "./provableAPI.sol";
 import "./Account.sol";
 
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
-contract User is usingProvable {
+contract User {
   
   struct AccountInfo {
-    string ID;
+    string _id;
     string role;
-    address wallet;
+    string infoIPFS;
+    address _address;
     bool isExist;
   }
 
+  // address[] public boundAccountsList;
+  mapping(address => AccountInfo) public addressToAccount;
   mapping(string => AccountInfo) public idToAccount;
-  mapping(string => AccountInfo) public nameToAccount;
 
   Account public account;
 
@@ -26,38 +27,37 @@ contract User is usingProvable {
     account = Account(_accountAddress);
   }
 
-  function addAccountInfo(string memory _name, string memory _password) public {
-    require(!nameToAccount[_name].isExist, "The account has been bound to the wallet");
-    bytes32 name = keccak256(bytes(_name));
-    bytes32 password = keccak256(bytes(_password));
+  // function isBound(address targetAddress) public view returns (bool) {
+  //   for (uint256 i = 0; i < boundAccountsList.length; i++) {
+  //       if (boundAccountsList[i] == targetAddress) {
+  //           return true;
+  //       }
+  //   }
+  //   return false;
+  // }
 
-    string memory ipfs = account.getAccountsIPFS();
-    // string memory arvg1 = "json(";
-    // string memory arvg2 = ")";
-    // string memory arvg3 = string.concat(string.concat(arvg1, ipfs), arvg2);
-
-    // provable_query("IPFS", ipfs);
-    provable_query("URL", "json(https://api.pro.coinbase.com/products/ETH-USD/ticker).price");
-    // require(_name == rootName && _password == rootPassword, "Invalid credentials");
-    // owner = msg.sender;
-    // hasSetOwner = true;
+  function addAccount(string memory _name, string memory _password) public {
+    require(!addressToAccount[msg.sender].isExist, "The account has been bound to the wallet");
+    require(account.isAccountCorrect(_name, _password), "Invalid credentials");
+    addressToAccount[msg.sender] = AccountInfo("", "", "", msg.sender, true);
+    // boundAccountsList.push(msg.sender);
   }
 
-  function __callback(bytes32 _myid, string memory _result, bytes memory _proof) public {
-    require(msg.sender == provable_cbAddress(), "Callback address is not provable_cbAddress");
-    emit LogResult(_result);
+  function updateAccountInfo(string memory _id, string memory _role, string memory infoIPFS) public {
+    require(addressToAccount[msg.sender].isExist, "The account has not been bound to the wallet");
+    addressToAccount[msg.sender]._id = _id;
+    addressToAccount[msg.sender].role = _role;
+    addressToAccount[msg.sender].infoIPFS = infoIPFS;
+    idToAccount[_id] = addressToAccount[msg.sender];
   }
 
-//   function updateAccountsIPFS(string memory _ipfs) public {
-//     require(msg.sender == owner, "Only owner can update Accounts IPFS");
-//     accountsIPFS = _ipfs;
-//   }
+  function getAccountInfoByAddress(address _address) public view returns (string memory, string memory, string memory, bool) {
+    require(addressToAccount[msg.sender].isExist, "The account has not been bound to the wallet");
+    return (addressToAccount[_address]._id, addressToAccount[_address].role, addressToAccount[_address].infoIPFS, addressToAccount[_address].isExist);
+  }
 
-//   function getOwner() view public returns (address) {
-//     return owner;
-//   }
-
-//   function getAccountsIPFS() view public returns (string memory) {
-//     return accountsIPFS;
-//   }
+  function getAccountInfoById(string memory _id) public view returns (string memory, string memory, string memory, bool) {
+    require(idToAccount[_id].isExist, "The account has not been bound to the wallet");
+    return (idToAccount[_id]._id, idToAccount[_id].role, idToAccount[_id].infoIPFS, idToAccount[_id].isExist);
+  }
 }

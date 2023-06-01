@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const IPFS = require('ipfs-http-client');
 const { expectRevert } = require('@openzeppelin/test-helpers');
-const SHA256 = require("crypto-js/sha256");
+// const SHA256 = require("crypto-js/sha256");
 require('dotenv').config();
 
 describe("Account", function () {
@@ -31,22 +31,22 @@ describe("Account", function () {
   });
 
   it("should set owner", async function () {
-    await account.connect(owner).setOwner(username, password);
+    await account.connect(owner).addFirstAdmin(username, password);
     const ownerAddress = await account.getOwner();
     expect(ownerAddress).to.equal(owner.address);
   });
 
   it("should update accounts ipfs", async function () {
-    await account.connect(owner).setOwner(username, password);
+    await account.connect(owner).addFirstAdmin(username, password);
     await account.connect(owner).updateAccountsIPFS('test');
     let ipfs = await account.getAccountsIPFS();
     expect(ipfs).to.equal('test');
   });
 
   it('should revert if owner is set', async () => {
-    await account.connect(owner).setOwner(username, password);
+    await account.connect(owner).addFirstAdmin(username, password);
     await expectRevert(
-      account.connect(owner).setOwner(username, password),
+      account.connect(owner).addFirstAdmin(username, password),
       'Owner already set'
     );
   });
