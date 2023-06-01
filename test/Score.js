@@ -36,8 +36,8 @@ describe("Score", function() {
   
     it("should store score", async function() {
       console.log(cid.path);
-      await score.connect(owner).signAndStore("108097654", "math", cid.path);
-      const result = await score.getScoreDetails("108097654", "math");
+      await score.connect(owner).Store("108097654", "math", cid.path);
+      const result = await score.getScoreDetails("108097654");
       console.log(result);
     //   expect(optionLength.toNumber()).to.equal(2);
     });

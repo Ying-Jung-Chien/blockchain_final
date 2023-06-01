@@ -20,6 +20,8 @@ contract User is usingProvable {
 
   Account public account;
 
+  event LogResult(string result);
+
   constructor(address _accountAddress) {
     account = Account(_accountAddress);
   }
@@ -30,19 +32,21 @@ contract User is usingProvable {
     bytes32 password = keccak256(bytes(_password));
 
     string memory ipfs = account.getAccountsIPFS();
+    // string memory arvg1 = "json(";
+    // string memory arvg2 = ")";
+    // string memory arvg3 = string.concat(string.concat(arvg1, ipfs), arvg2);
 
-    provable_query("IPFS", ipfs);
+    // provable_query("IPFS", ipfs);
+    provable_query("URL", "json(https://api.pro.coinbase.com/products/ETH-USD/ticker).price");
     // require(_name == rootName && _password == rootPassword, "Invalid credentials");
     // owner = msg.sender;
     // hasSetOwner = true;
   }
 
   function __callback(bytes32 _myid, string memory _result, bytes memory _proof) public {
-    require(msg.sender == provable_cbAddress());
-    // update(); // Recursively update the price stored in the contract...
-    // priceETHXBT = _result;
-    // emit LogNewKrakenPriceTicker(priceETHXBT);
-}
+    require(msg.sender == provable_cbAddress(), "Callback address is not provable_cbAddress");
+    emit LogResult(_result);
+  }
 
 //   function updateAccountsIPFS(string memory _ipfs) public {
 //     require(msg.sender == owner, "Only owner can update Accounts IPFS");
