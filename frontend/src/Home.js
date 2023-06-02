@@ -1,8 +1,8 @@
 import React from 'react';
 // import ReactDOM from 'react-dom/client';
 import './index.css';
-import SendScore from './SendScore';
-import ScoreTable from './ScoreTable';
+import SendScore from './Teacher/SendScore';
+import ScoreTable from './Student/ScoreTable';
 import Review from './Review';
 import { useEffect } from "react";
 import { useNavigate  } from 'react-router-dom';

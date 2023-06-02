@@ -11,10 +11,11 @@ contract Account {
   address[] public adminList;
   bool private hasFirstAdmin = false;
   // string public accountsIPFS;
-  bytes32[][] public accountsList;
-  User public user;
+  bytes32[][] private accountsList;
+  User private user;
 
   mapping(address => address) public adminRemover;
+  mapping(address => string) public adminInfo;
 
   constructor(string memory _name, string memory _password) {
     rootName = keccak256(bytes(_name));
@@ -65,17 +66,20 @@ contract Account {
     adminList.pop();
   }
 
-  function addNewAccount(string memory _name, string memory _password) public {
+  function addNewAccount(string memory _name, string memory _password, string memory _role) public {
     require(isAdminInList(msg.sender), "Only admin can add new account");
+    require(!isAccountCorrect(_name, _password, _role), "Account already exists");
+    
     bytes32 hashName = keccak256(bytes(_name));
     bytes32 hashPassword = keccak256(bytes(_password));
-    accountsList.push([hashName, hashPassword]);
+    bytes32 hashRole = keccak256(bytes(_role));
+    accountsList.push([hashName, hashPassword, hashRole]);
   }
 
-  function removeUsedAccount(string memory _name, string memory _password) public {
-    require(isAdminInList(msg.sender) || msg.sender == address(user), "Only admin or User contract can remove admin");
+  function removeUsedAccount(string memory _name, string memory _password, string memory _role) public {
+    require(isAdminInList(msg.sender) || msg.sender == address(user), "Only admin or User contract can remove account");
     
-    uint256 index = isAccountExist(_name, _password);
+    uint256 index = getAccountId(_name, _password, _role);
     require(index < accountsList.length, "Account does not exist");
 
     accountsList[index] = accountsList[accountsList.length - 1];
@@ -83,20 +87,20 @@ contract Account {
   }
 
 
-  function isAccountExist(string memory _name, string memory _password) private view returns (uint256) {
+  function getAccountId(string memory _name, string memory _password, string memory _role) private view returns (uint256) {
     bytes32 hashName = keccak256(bytes(_name));
     bytes32 hashPassword = keccak256(bytes(_password));
     
     for (uint256 i = 0; i < accountsList.length; i++) {
-      if (accountsList[i][0] == hashName && accountsList[i][1] == hashPassword) {
+      if (accountsList[i][0] == hashName && accountsList[i][1] == hashPassword && accountsList[i][2] == keccak256(bytes(_role))) {
         return i;
       }
     }
     return accountsList.length;
   }
 
-  function isAccountCorrect(string memory _name, string memory _password) public view returns (bool) {
-    if (isAccountExist(_name, _password) < accountsList.length) return true;
+  function isAccountCorrect(string memory _name, string memory _password, string memory _role) public view returns (bool) {
+    if (getAccountId(_name, _password, _role) < accountsList.length) return true;
     return false;
   }
 

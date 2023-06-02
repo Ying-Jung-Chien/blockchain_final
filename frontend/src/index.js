@@ -4,12 +4,14 @@ import './index.css';
 // import App from './App';
 import Login from './Login';
 import Home from './Home';
+import AdminLogin from './Admin/Login';
+import AdminHome from './Admin/Home';
 // import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-// localStorage.setItem("authenticated", false);
+localStorage.setItem("authenticated", false);
 
 
 root.render(
@@ -17,6 +19,8 @@ root.render(
     <Routes>
       <Route element={<Login />} path={'/'}></Route>
       <Route element={<Home />} path={'/home'}></Route>
+      <Route element={<AdminLogin />} path={'/admin'}></Route>
+      <Route element={<AdminHome />} path={'/admin/home'}></Route>
     </Routes>
   </Router>
  

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ScoreArtifact from './abi/contracts/Score.sol/Score.json';
-import scoreContractAddress from './abi/contracts/Score.sol/contract-address.json';
-import TranscriptArtifact from './abi/contracts/Transcript.sol/Transcript.json';
-import transcriptContractAddress from './abi/contracts/Transcript.sol/contract-address.json';
+import ScoreArtifact from '../abi/contracts/Score.sol/Score.json';
+import scoreContractAddress from '../abi/contracts/Score.sol/contract-address.json';
+import TranscriptArtifact from '../abi/contracts/Transcript.sol/Transcript.json';
+import transcriptContractAddress from '../abi/contracts/Transcript.sol/contract-address.json';
 import Web3 from 'web3';
 import { Buffer } from "buffer";
 import { create as ipfsHttpClient } from "ipfs-http-client";

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { create as ipfsHttpClient } from "ipfs-http-client";
-import ScoreArtifact from './abi/contracts/Score.sol/Score.json';
-import contractAddress from './abi/contracts/Score.sol/contract-address.json';
+import ScoreArtifact from '../abi/contracts/Score.sol/Score.json';
+import contractAddress from '../abi/contracts/Score.sol/contract-address.json';
 import Web3 from 'web3';
 import { Buffer } from "buffer";
 import { useNavigate  } from 'react-router-dom';
@@ -68,7 +68,7 @@ const SendScore = () => {
       console.log(cid.path);
 
       const scoreContract = new web3.eth.Contract(ScoreArtifact, contractAddress.Score);
-      await scoreContract.methods.Store(studentId, subject, cid.path).send({from: signer})
+      await scoreContract.methods.Store(studentId, subject, cid.path).send({from: signer});
     } catch (error) {
       console.error('Error:', error);
     }

@@ -60,26 +60,33 @@ async function main() {
   const username = "admin";
   const password = "root12345";
 
-  const hashUsername = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(username));
-  const hashPassword = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(password));
+  // const hashUsername = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(username));
+  // const hashPassword = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(password));
 
-  const bytes32Name = ethers.utils.hexZeroPad(hashUsername, 32);
-  const bytes32Password = ethers.utils.hexZeroPad(hashPassword, 32);
+  // const bytes32Name = ethers.utils.hexZeroPad(hashUsername, 32);
+  // const bytes32Password = ethers.utils.hexZeroPad(hashPassword, 32);
 
   const Account = await hre.ethers.getContractFactory("Account");
-  const account = await Account.deploy(bytes32Name, bytes32Password);
+  const account = await Account.deploy(username, password);
   await account.deployed();
-  console.log(account.address);
+  console.log('account address:', account.address);
+
+  const User = await hre.ethers.getContractFactory("User");
+  const user = await User.deploy(account.address);
+  await user.deployed();
+  console.log('user address:', user.address);
+
+  await account.setUserContract(user.address);
 
   const Score = await hre.ethers.getContractFactory("Score");
   const score = await Score.deploy();
   await score.deployed();
-  console.log(score.address);
+  console.log('score address:', score.address);
 
   const Transcript = await hre.ethers.getContractFactory("Transcript");
   const transcript = await Transcript.deploy();
   await transcript.deployed();
-  console.log(transcript.address);
+  console.log('transcript address:', transcript.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
