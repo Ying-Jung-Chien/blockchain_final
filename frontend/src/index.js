@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 // import App from './App';
 import Login from './Login';
+import Logout from './Logout';
 import Home from './Home';
 import AdminLogin from './Admin/Login';
 import AdminHome from './Admin/Home';
@@ -18,6 +19,7 @@ root.render(
   <Router>
     <Routes>
       <Route element={<Login />} path={'/'}></Route>
+      <Route element={<Logout />} path={'/logout'}></Route>
       <Route element={<Home />} path={'/home'}></Route>
       <Route element={<AdminLogin />} path={'/admin'}></Route>
       <Route element={<AdminHome />} path={'/admin/home'}></Route>

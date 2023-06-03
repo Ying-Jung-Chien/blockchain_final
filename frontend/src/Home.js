@@ -21,7 +21,7 @@ const Home = () => {
   const handleLogout = () => {
     console.log('Logout');
     localStorage.setItem("authenticated", false);
-    navigate('/');
+    navigate('/logout');
   };
 
 

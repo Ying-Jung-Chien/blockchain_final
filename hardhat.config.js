@@ -15,6 +15,10 @@ module.exports = {
     hardhat: {
       chainId: 1337
     },
+    // rinkeby: {
+    //   url: "https://mainnet.infura.io/v3/23cf0d54648e4b0b905434ac5533f816", //Infura url with projectId
+    //   accounts: [""] // add the account that will deploy the contract (private key)
+    //  },
   }
 };
 
