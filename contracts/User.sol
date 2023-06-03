@@ -53,8 +53,8 @@ contract User {
     return (addressToAccount[_address]._id, addressToAccount[_address].role, addressToAccount[_address].infoIPFS, addressToAccount[_address].isExist);
   }
 
-  function getAccountInfoById(string memory _id) public view returns (string memory, string memory, string memory, bool) {
+  function getAccountInfoById(string memory _id) public view returns (address, string memory, string memory, bool) {
     require(idToAccount[_id].isExist, "The account has not been bound to the wallet");
-    return (idToAccount[_id]._id, idToAccount[_id].role, idToAccount[_id].infoIPFS, idToAccount[_id].isExist);
+    return (idToAccount[_id]._address, idToAccount[_id].role, idToAccount[_id].infoIPFS, idToAccount[_id].isExist);
   }
 }
