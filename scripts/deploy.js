@@ -10,6 +10,7 @@ require('dotenv').config();
 
 
 async function main() {
+  const inspector = process.env.INSPECTOR_ADDRESS;
 
   const username = "admin";
   const password = "root12345";
@@ -39,7 +40,7 @@ async function main() {
   await account.setUserContract(user.address);
 
   const Score = await hre.ethers.getContractFactory("Score");
-  const score = await Score.deploy();
+  const score = await Score.deploy(account.address, user.address);
   await score.deployed();
   console.log('score address:', score.address);
 
@@ -50,9 +51,11 @@ async function main() {
   fs.writeFileSync('./frontend/src/abi/contracts/Score.sol/contract-address.json', JSON.stringify(data, null, 2));
 
   const Transcript = await hre.ethers.getContractFactory("Transcript");
-  const transcript = await Transcript.deploy();
+  const transcript = await Transcript.deploy(account.address, user.address, score.address, inspector);
   await transcript.deployed();
   console.log('transcript address:', transcript.address);
+
+  await score.setTranscriptContract(transcript.address);
 
   data = {
     Transcript: transcript.address,

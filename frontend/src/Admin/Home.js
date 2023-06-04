@@ -11,7 +11,7 @@ import contractAddress from '../abi/contracts/Account.sol/contract-address.json'
 // const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const Home = () => {
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545")
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
   const accountContract = new web3.eth.Contract(AccountArtifact, contractAddress.Account);
 
   const navigate = useNavigate();
@@ -59,7 +59,8 @@ const Home = () => {
 
   const handleLogout = () => {
     console.log('Logout');
-    localStorage.setItem("authenticated", false);
+    // localStorage.setItem("authenticated", false);
+    localStorage.clear();
     navigate('/');
   };
 

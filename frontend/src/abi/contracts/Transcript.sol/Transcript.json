@@ -2,67 +2,31 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "studentID",
-        "type": "string"
+        "internalType": "address",
+        "name": "_accountAddress",
+        "type": "address"
       },
       {
-        "internalType": "string",
-        "name": "ipfsCID",
-        "type": "string"
+        "internalType": "address",
+        "name": "_userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_scoreAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_inspector",
+        "type": "address"
       }
     ],
-    "name": "Apply",
-    "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "constructor"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "penddingID",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "ipfsCID",
-        "type": "string"
-      }
-    ],
-    "name": "Approve",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "penddingID",
-        "type": "uint256"
-      }
-    ],
-    "name": "Reject",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "applications",
-    "outputs": [
       {
         "internalType": "string",
         "name": "studentID",
@@ -70,43 +34,59 @@
       },
       {
         "internalType": "string",
-        "name": "ipfsCID",
+        "name": "semester",
         "type": "string"
       },
       {
         "internalType": "string",
-        "name": "state",
+        "name": "ipfs",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "privateKey",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "studentAddress",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
+    "name": "addGradeReport",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getPenddingApplications",
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "studentID",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "semester",
+        "type": "string"
+      }
+    ],
+    "name": "getGradeReportPrivate",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "studentID",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "ipfsCID",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "state",
-            "type": "string"
-          }
-        ],
-        "internalType": "struct Transcript.Application[]",
+        "internalType": "address",
         "name": "",
-        "type": "tuple[]"
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -116,13 +96,42 @@
     "inputs": [
       {
         "internalType": "string",
+        "name": "studentID",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "semester",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "privateKey",
+        "type": "string"
+      }
+    ],
+    "name": "getGradeReportPublic",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
         "name": "",
         "type": "string"
       },
       {
-        "internalType": "uint256",
+        "internalType": "string",
         "name": "",
-        "type": "uint256"
+        "type": "string"
       }
     ],
     "name": "gradeReports",
@@ -138,57 +147,14 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      },
+      {
         "internalType": "address",
-        "name": "signer",
+        "name": "student",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "isReviewed",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "penddingApplications",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "studentID",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "ipfsCID",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "state",
-        "type": "string"
       }
     ],
     "stateMutability": "view",

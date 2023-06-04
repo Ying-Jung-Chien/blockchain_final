@@ -84,6 +84,23 @@ const Login = () => {
       console.log('User accounts:', userAccounts);
       console.log('User address:', userAddress);
       console.log('Is bound:', isBound);
+
+      if (isBound) {
+        userContract.methods.getAccountInfoByAddress(userAddress).call((error, result) => {
+          if (error) {
+            console.error('Error:', error);
+          } else if (!result[3]) {
+            console.log('Account has been removed.');
+            localStorage.setItem('error', 'Account has been removed.');
+            setFirstLogin(isBound);
+          } else {
+            localStorage.setItem('ID', result[0]);
+            localStorage.setItem('role', result[1]);
+            console.log('ID:', result[0]);
+            console.log('Role:', result[1]);
+          }
+        });
+      }
   
       setUserAddress(userAddress);
       localStorage.setItem('user', userAddress);
@@ -117,7 +134,8 @@ const Login = () => {
       .on('transactionHash', function(hash) {
         console.log('Transaction hash:', hash);
         localStorage.setItem("authenticated", true);
-        navigate('/home');
+        localStorage.setItem('role', role);
+        navigate('/sign_up');
       })
       .on('confirmation', function(confirmationNumber, receipt) {
         console.log('Confirmation number:', confirmationNumber);
