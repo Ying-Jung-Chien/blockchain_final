@@ -316,24 +316,36 @@ const SendScore = () => {
         {errorMessage && <div className="error">Error: {errorMessage}</div>}
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <label>
-          Subject:
-          <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Student ID:
-          <input type="text" value={studentId} onChange={(e) => setStudentId(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Score:
-          <input type="text" value={score} onChange={(e) => setScore(e.target.value)} />
-        </label>
-        <br />
-        <button type="submit">Submit</button>
-      </form>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
+          <h2>Send Student Score</h2>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <label style={{ textAlign: 'left' }}>
+              Subject:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <label style={{ textAlign: 'left' }}>
+              Student ID:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={studentId} onChange={(e) => setStudentId(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <label style={{ textAlign: 'left' }}>
+              Score:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={score} onChange={(e) => setScore(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+      
 
       {/* <form onSubmit={handleGetData}>
         <button type="submit">Get Data</button>
