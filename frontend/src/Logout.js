@@ -23,7 +23,16 @@ const Logout = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <button type="submit" onClick={handleLogin}>Login</button>
+      <button
+        style={{
+          backgroundColor: 'green',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          padding: '20px',
+          margin: '80px',
+        }}
+        type="submit" onClick={handleLogin}>Redirect to Login</button>
     </div>
   );
 };

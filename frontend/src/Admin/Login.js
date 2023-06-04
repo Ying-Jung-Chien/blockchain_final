@@ -68,21 +68,36 @@ const Login = () => {
 
   if (firstLogin == true) {
     return (
-      <div>
-        <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <label>
-            Username:
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-          </label>
-          <br />
-          <label>
-            Password:
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </label>
-          <br />
-          <button type="submit">Login</button>
-        </form>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
+        <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
+          <h2>Login</h2>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onSubmit={handleLogin}>
+            <label style={{ textAlign: 'left' }}>
+              Username:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <label style={{ textAlign: 'left' }}>
+              Password:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <button
+              style={{
+                backgroundColor: 'blue',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                padding: '10px',
+                marginRight: '10px',
+              }}
+              type="submit">Login</button>
+          </form>
+        </div>
       </div>
     );
   } else {

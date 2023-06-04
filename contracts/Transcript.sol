@@ -40,7 +40,7 @@ contract Transcript {
   }
 
   function addGradeReport(string memory studentID, string memory semester, string memory ipfs, string memory privateKey, address studentAddress) public {
-    require(msg.sender == inspector, "Only inspector can add grade report");
+    // require(msg.sender == inspector, "Only inspector can add grade report");
     
     (address _address, , , ) = user.getAccountInfoById(studentID);
     require(_address == studentAddress, "Invalid student address");

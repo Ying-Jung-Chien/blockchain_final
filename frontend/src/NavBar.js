@@ -9,29 +9,33 @@ import { useNavigate  } from 'react-router-dom';
 
 
 
-const NavBar = ({ handleLogout, id }) => {
+const NavBar = ({ handleLogout, id, role }) => {
   return (
     <div
       style={{
         display: 'flex',
         justifyContent: 'flex-end',
         alignItems: 'center',
+        backgroundColor: '#721f6e',
       }}
     >
-      <div style={{ marginRight: '10px' }}>Hi, {id}</div>
-      <button
-        style={{
-          backgroundColor: 'red',
-          color: 'white',
-          border: 'none',
-          borderRadius: '5px',
-          padding: '10px',
-          margin: '10px',
-        }}
-        onClick={handleLogout}
-      >
-        Logout
-      </button>
+      <div style={{ marginLeft: '10px', color: 'white' }}>{role} Home</div>
+      <div style={{ flex: '1', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <div style={{ marginRight: '10px', color: 'white' }}>Hi, {id}</div>
+        <button
+          style={{
+            backgroundColor: 'red',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            padding: '10px',
+            margin: '10px',
+          }}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

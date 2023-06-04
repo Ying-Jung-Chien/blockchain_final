@@ -6,6 +6,7 @@ import { useNavigate  } from 'react-router-dom';
 import Web3 from 'web3';
 import AccountArtifact from '../abi/contracts/Account.sol/Account.json';
 import contractAddress from '../abi/contracts/Account.sol/contract-address.json';
+import NavBar from '../NavBar';
 
 
 // const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -16,6 +17,7 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const [adminAddress, setAdminAddress] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('teacher');
@@ -36,6 +38,7 @@ const Home = () => {
   const checkAccount = async () => {
     const user = (await web3.eth.getAccounts())[0];
     const admin = localStorage.getItem("admin");
+    setAdminAddress(admin);
     
     if (user !== admin) return false;
     return true;
@@ -184,7 +187,7 @@ const Home = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <button 
           style={{
             backgroundColor: 'red',
@@ -197,50 +200,99 @@ const Home = () => {
           onClick={handleLogout}>
             Logout
         </button>
-      </div>
+      </div> */}
+      <NavBar handleLogout={handleLogout} id={adminAddress} role={'Admin'} />
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        {successMessage && <div className="success">{successMessage}</div>}
-        {errorMessage && <div className="error">Error: {errorMessage}</div>}
+        {successMessage && <div className="success" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>{successMessage}</div>}
+        {errorMessage && <div className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</div>}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
           <h2>Add New User</h2>
-          <form>
-            <label>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <label style={{ textAlign: 'left' }}>
               Username:
-              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+              </div>
             </label>
             <br />
-            <label>
+            <label style={{ textAlign: 'left' }}>
               Password:
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
             </label>
             <br />
-            <label>
+            <label style={{ textAlign: 'left' }}>
               Role:
-              <select value={role} onChange={(e) => setRole(e.target.value)}>
-                <option value="teacher">teacher</option>
-                <option value="student">student</option>
-              </select>
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <select style={{ width: '150px' }} value={role} onChange={(e) => setRole(e.target.value)}>
+                  <option value="teacher">teacher</option>
+                  <option value="student">student</option>
+                </select>
+              </div>
             </label>
             <br />
-            <button type="submit" onClick={handleAddUser}>Add User</button>
-            <button type="submit" onClick={handleRemoveUser}>Remove User</button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                style={{
+                  backgroundColor: 'blue',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px',
+                  marginRight: '10px',
+                }}
+                type="submit" onClick={handleAddUser}>Add User</button>
+              <button
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px',
+                  marginLeft: '10px',
+                }}
+                type="submit" onClick={handleRemoveUser}>Remove User</button>
+            </div>
           </form>
         </div>
 
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
           <h2>Add New Admin</h2>
-          <form>
-            <label>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <label style={{ textAlign: 'left' }}>
               Address:
-              <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+              </div>
             </label>
             <br />
-            <button type="submit" onClick={handleAddAdmin}>Add Admin</button>
-            <button type="submit" onClick={handleRemoveAdmin}>Remove Admin</button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                style={{
+                  backgroundColor: 'blue',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px',
+                  marginRight: '10px',
+                }}
+                type="submit" onClick={handleAddAdmin}>Add Admin</button>
+              <button
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px',
+                  marginLeft: '10px',
+                }}
+                type="submit" onClick={handleRemoveAdmin}>Remove Admin</button>
+            </div>
           </form>
 
         </div>

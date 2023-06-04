@@ -24,7 +24,7 @@ const Home = () => {
     setID(localStorage.getItem("ID"));
 
     const intervalId = setInterval(() => {
-      if (role !== previousValue && role !== null) {
+      if (role !== previousValue && role !== null && ID !== null) {
         clearInterval(intervalId);
       } else {
         window.location.reload();
@@ -46,22 +46,22 @@ const Home = () => {
   if (role === 'teacher') {
     return (
       <div>
-        <NavBar handleLogout={handleLogout} id={ID} />
+        <NavBar handleLogout={handleLogout} id={ID} role={'Teacher'} />
         <SendScore />
       </div>
     );
   } else if (role === 'student') {
     return (
       <div>
-        <NavBar handleLogout={handleLogout} id={ID} />
+        <NavBar handleLogout={handleLogout} id={ID} role={'Student'} />
         <ScoreTable />
       </div>
     );
   } else {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <h1 style={{ display: 'flex', justifyContent: 'center' }}>
         Loading...
-      </div>
+      </h1>
     );
   }
 }

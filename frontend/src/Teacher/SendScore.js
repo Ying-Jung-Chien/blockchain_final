@@ -9,31 +9,27 @@ import { Buffer } from "buffer";
 import { useNavigate  } from 'react-router-dom';
 import { useEffect } from "react";
 
-
 const SendScore = () => {
-  // const projectId = process.env.REACT_APP_PROJECT_ID;
-  // const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
-  // const authorization = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
-//   console.log(projectId, projectSecretKey);
+  const projectId = process.env.REACT_APP_PROJECT_ID;
+  const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
+  const authorization = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
+  console.log(projectId, projectSecretKey);
 
-  // const ipfs = ipfsHttpClient({
-  //   url: "https://ipfs.infura.io:5001/api/v0",
-  //   headers: {
-  //     authorization,
-  //   },
-  // });
+  const ipfs = ipfsHttpClient({
+    url: "https://ipfs.infura.io:5001/api/v0",
+    headers: {
+      authorization,
+    },
+  });
 
   
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
   const scoreContract = new web3.eth.Contract(ScoreArtifact, scoreContractAddress.Score);
   const userContract = new web3.eth.Contract(UserArtifact, userContractAddress.User);
-  // const [signer, setSigner] = useState('');
-  // const [signature, setSignature] = useState('');
+  
   const [subject, setSubject] = useState('');
   const [studentId, setStudentId] = useState('');
   const [score, setScore] = useState('');
-  // const [studentAddress, setStudentAddress] = useState('');
-  // const [semester, setSemester] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -45,8 +41,8 @@ const SendScore = () => {
     const userNow = (await web3.eth.getAccounts())[0];
     const userLogin = localStorage.getItem("user");
     
-    console.log('userNow:', userNow);
-    console.log('userLogin:', userLogin);
+    // console.log('userNow:', userNow);
+    // console.log('userLogin:', userLogin);
     if (userNow.toUpperCase() !== userLogin.toUpperCase()) return false;
     return true;
   };
@@ -66,22 +62,6 @@ const SendScore = () => {
       setErrorMessage('');
     }, 5000);
   };
-
-  // const getStudentAddress = async () => {
-  //   userContract.methods.getAccountInfoById(studentId).call((error, result) => {
-  //     if (error) {
-  //       console.error('Error:', error);
-  //     } else if (!result[3]) {
-  //       console.log('Account has been removed.');
-  //       showErrorMessage('Account has been removed.');
-  //     } else {
-  //       // setStudentAddress(result[0]);
-  //       console.log('Address:', result[0]);
-  //       return result[0];
-  //     }
-  //   });
-  //   return;
-  // };
   
   const getStudentAddress = async () => {
     return new Promise((resolve, reject) => {
@@ -121,18 +101,22 @@ const SendScore = () => {
     return semester;
   };
 
-  const getEncrydata = async (score) => {
+  const getEncryptdata = async (score) => {
     const { privateKey, publicKey } = web3.eth.accounts.create();
     console.log('Private Key:', privateKey);
 
+    // const privateKey = web3.utils.randomHex(32);
+    // console.log('Random:', privateKey, typeof(privateKey));
+
     const encryptedData = web3.eth.accounts.encrypt(score, privateKey);
+    // const cid = (await ipfs.add(JSON.stringify(encryptedData))).path;
+    console.log('Encrypted Data:', JSON.stringify(encryptedData));
 
-    console.log('Encrypted Data:', encryptedData);
 
-    // const decryptedData = web3.eth.accounts.decrypt(encryptedData, privateKey);
+    // const decryptedData = web3.eth.accounts.decrypt(JSON.parse(JSON.stringify(encryptedData)), privateKey);
     // console.log('Decrypted Data:', decryptedData.privateKey);
 
-    return [privateKey, encryptedData];
+    return [JSON.stringify(encryptedData), privateKey];
   };
 
   const handleSubmit = async (e) => {
@@ -155,7 +139,7 @@ const SendScore = () => {
       const semester = await getSemester();
       console.log('Semester:', semester);
 
-      const [encryptedData, privateKey] = await getEncrydata(score);
+      const [encryptedData, privateKey] = await getEncryptdata(score);
       console.log('Encrypted Data:', encryptedData, privateKey);
 
       scoreContract.methods.Store(studentId, subject, "", semester, encryptedData, privateKey, studentAddress).send({ from: user })
@@ -172,142 +156,8 @@ const SendScore = () => {
         showErrorMessage(reason);
         console.log('Error reason:', reason);
       });
-      
-
-      // accountContract.methods.addNewAccount(username, password, role).send({ from: user })
-      // .on('transactionHash', function(hash) {
-      //   console.log('Transaction hash:', hash);
-      //   showSuccessMessage('Add user successfully');
-      // })
-      // .on('confirmation', function(confirmationNumber, receipt) {
-      //   console.log('Confirmation number:', confirmationNumber);
-      //   console.log('Receipt:', receipt);
-      // })
-      // .on('error', function(error) {
-      //   const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
-      //   showErrorMessage(reason);
-      //   console.log('Error reason:', reason);
-      // });
     }
   };
-
-  // const ethEnabled = () => {
-  //   if (window.ethereum) {
-  //     window.web3 = new Web3(window.ethereum);
-  //     window.ethereum.enable();
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
-  // const getSignerAddress = async () => {
-  //   try {
-  //     ethEnabled();
-  //     const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  //     const accounts = await web3.eth.getAccounts();
-  //   //   console.log(accounts);
-  //     setSigner(accounts[0]);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-  
-  // getSignerAddress();
-
-  // const signMessage = async (message, signer) => {
-  //   try {
-  //     console.log(message, signer)
-  //     const web3 = new Web3(window.ethereum);
-  //     const signMessage = await web3.eth.personal.sign(JSON.stringify(message), signer);
-  //     setSignature(signMessage);
-
-  //     const signCid = await ipfs.add(signMessage);
-
-  //     const data = JSON.stringify({
-  //       origin: message,
-  //       signCid: signCid.path
-  //     });
-
-  //     const cid = await ipfs.add(data);
-  //     console.log(cid.path);
-
-  //     const scoreContract = new web3.eth.Contract(ScoreArtifact, contractAddress.Score);
-  //     await scoreContract.methods.Store(studentId, subject, cid.path).send({from: signer});
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-  
-//   const verifySignature = async (message, signature, signerAddress) => {
-//     try {
-//       const web3 = new Web3(window.ethereum);
-//       const recoveredAddress = await web3.eth.personal.ecRecover(
-//         message,
-//         signature
-//       );
-//       const result =  recoveredAddress.toLowerCase() === signerAddress.toLowerCase();
-//       console.log(result);
-//     } catch (error) {
-//       console.error('Error:', error);
-//     }
-//   };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-    
-  //   console.log('Subject:', subject);
-  //   console.log('Student ID:', studentId);
-  //   console.log('Score:', score);
-    
-  //   const data = {
-  //       subject: subject,
-  //       studentId: studentId,
-  //       score: score,
-  //   };
-  //   signMessage(data, signer);
-  // };
-
-//   const recoverSignature = async (signature, signerAddress) => {
-//     try {
-//       const web3 = new Web3(window.ethereum);
-//       const recoveredAddress = await web3.eth.accounts.recover(signedData, signature);
-//       console.log("Recovered Address:", recoveredAddress);
-//     } catch (error) {
-//       console.error('Error:', error);
-//     }
-//   };
-
-//   const fetchUserData = (cid, address) => {
-//     fetch(`https://ipfs.io/ipfs/${cid}`)
-//       .then(response => {
-//         return response.json()
-//       })
-//       .then(data => {
-//         recoverSignature(data, address);
-//       })
-//   }
-
-  // const getData = async (studentId, subject) => {
-  //   try {
-  //     const web3 = new Web3(window.ethereum);
-  //     const scoreContract = new web3.eth.Contract(ScoreArtifact, contractAddress.Score);
-  //     const result = await scoreContract.methods.getScoreDetails(studentId, subject).call();
-  //     console.log(result[0]);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
-
-  // const handleGetData = (e) => {
-  //   e.preventDefault();
-    
-  //   console.log('handleGetData');
-    
-  //   getData(studentId, subject);
-  // };
-
-  
-  
 
   return (
     <div>
@@ -345,11 +195,6 @@ const SendScore = () => {
           </form>
         </div>
       </div>
-      
-
-      {/* <form onSubmit={handleGetData}>
-        <button type="submit">Get Data</button>
-      </form> */}
     </div>
   );
 };

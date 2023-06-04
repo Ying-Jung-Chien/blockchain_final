@@ -13,7 +13,7 @@ contract Score {
     string subject;
     string semester;
     string ipfsCID;
-    uint256 score;
+    string score;
     string key;
     address student;
     address teacher;
@@ -46,7 +46,7 @@ contract Score {
                  string memory subject,
                  string memory ipfsCID,
                  string memory semester,
-                 uint256 score,
+                 string memory score,
                  string memory key,
                  address student) 
   public {
@@ -68,6 +68,7 @@ contract Score {
   }
 
   function getScoreDetails(string memory _id) public view returns (SubjectScore[] memory) {
+    require(scores[_id].length > 0, "Invalid student ID or no score has been added");
     (, string memory role, , ) = user.getAccountInfoByAddress(msg.sender);
     bool isTeacher = keccak256(bytes(role)) == keccak256(bytes('teacher'));
     require(account.isAdminInList(msg.sender) || isTeacher || 
@@ -75,5 +76,28 @@ contract Score {
             "Only admins, teachers, transcript contract and students themselves can get score details");
 
     return (scores[_id]);
+  }
+
+  function getScoreId(string memory _id,
+                            string memory _subject,
+                            string memory _semester,
+                            string memory _key) public view returns (uint256) {
+    for (uint256 i = 0; i < scores[_id].length; i++) {
+      if (keccak256(bytes(scores[_id][i].subject)) == keccak256(bytes(_subject)) &&
+          keccak256(bytes(scores[_id][i].semester)) == keccak256(bytes(_semester)) &&
+          keccak256(bytes(scores[_id][i].key)) == keccak256(bytes(_key))) {
+        return i;
+      }
+    }
+    return scores[_id].length;
+  }
+
+  function getScore(string memory _id,
+                    string memory _subject,
+                    string memory _semester,
+                    string memory _key) public view returns (string memory) {
+    uint256 scoreId = getScoreId(_id, _subject, _semester, _key);
+    require(scoreId < scores[_id].length, "Invalid score info");
+    return scores[_id][scoreId].score;
   }
 }

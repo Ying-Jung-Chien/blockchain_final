@@ -38,9 +38,9 @@
         "type": "string"
       },
       {
-        "internalType": "uint256",
+        "internalType": "string",
         "name": "score",
-        "type": "uint256"
+        "type": "string"
       },
       {
         "internalType": "string",
@@ -91,9 +91,9 @@
             "type": "string"
           },
           {
-            "internalType": "uint256",
+            "internalType": "string",
             "name": "score",
-            "type": "uint256"
+            "type": "string"
           },
           {
             "internalType": "string",
@@ -155,9 +155,9 @@
         "type": "string"
       },
       {
-        "internalType": "uint256",
+        "internalType": "string",
         "name": "score",
-        "type": "uint256"
+        "type": "string"
       },
       {
         "internalType": "string",
