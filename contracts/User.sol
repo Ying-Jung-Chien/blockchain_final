@@ -16,7 +16,6 @@ contract User {
     bool isExist;
   }
 
-  // address[] public boundAccountsList;
   mapping(address => AccountInfo) public addressToAccount;
   mapping(string => AccountInfo) public idToAccount;
 
@@ -38,7 +37,6 @@ contract User {
     require(account.isAccountCorrect(_name, _password, _role), "Invalid credentials");
     addressToAccount[msg.sender] = AccountInfo("", _role, "", "", msg.sender, true);
     account.removeUsedAccount(_name, _password, _role);
-    // boundAccountsList.push(msg.sender);
   }
 
   function updateAccountInfo(string memory _id, string memory infoIPFS) public {

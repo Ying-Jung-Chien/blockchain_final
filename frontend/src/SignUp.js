@@ -12,7 +12,7 @@ const SignUp = () => {
   const projectId = process.env.REACT_APP_PROJECT_ID;
   const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
   const authorization = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
-  console.log(projectId, projectSecretKey);
+  // console.log(projectId, projectSecretKey);
 
   const ipfs = ipfsHttpClient({
     url: "https://ipfs.infura.io:5001/api/v0",
@@ -28,7 +28,6 @@ const SignUp = () => {
   const [name, setName] = useState('');
   const [ID, setId] = useState('');
   const [email, setEmail] = useState('');
-  // const [ipfsCid, setIpfsCid] = useState('');
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("authenticated");
@@ -38,14 +37,14 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     
-    console.log('Name:', name);
-    console.log('ID:', ID);
-    console.log('Email:', email);
+    // console.log('Name:', name);
+    // console.log('ID:', ID);
+    // console.log('Email:', email);
 
     const data = JSON.stringify({Name: name, Email: email});
     const cid = (await ipfs.add(data)).path;
 
-    console.log('CID:', cid);
+    // console.log('CID:', cid);
 
     const userAddress = localStorage.getItem("user");
     

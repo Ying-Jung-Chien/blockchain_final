@@ -4,7 +4,6 @@ import UserArtifact from './abi/contracts/User.sol/User.json';
 import userContractAddress from './abi/contracts/User.sol/contract-address.json';
 import ScoreArtifact from './abi/contracts/Score.sol/Score.json';
 import scoreContractAddress from './abi/contracts/Score.sol/contract-address.json';
-// import { ethers } from 'ethers';
 import Web3 from 'web3';
 import { Buffer } from "buffer";
 import { useNavigate  } from 'react-router-dom';
@@ -35,35 +34,13 @@ const Search = () => {
   const [displayData, setDisplayData] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const ethEnabled = async () => {
-    if (window.ethereum) {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      window.web3 = new Web3(window.ethereum);
-      return true;
-    }
-    return false;
-  };
-  
-  const getUserAddress = async () => {
-    try {
-      const isEthEnabled = await ethEnabled();
-      if (!isEthEnabled) {
-        console.error('Ethereum not enabled');
-        return;
-      }
-  
-      const userAccounts = await window.ethereum.request({ method: 'eth_accounts' });
-      const userAddress = userAccounts[0];
-  
-      console.log('User accounts:', userAddress);
 
-      return userAddress;
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+  const getDecryptdata = async (data, key) => {
+    const decryptedData = web3.eth.accounts.decrypt(JSON.parse(JSON.stringify(data)), key);
+    // console.log('Decrypted Data:', decryptedData.privateKey.slice(2));
 
-  
+    return decryptedData.privateKey.slice(2);
+  };
 
   const showErrorMessage = (message) => {
     setErrorMessage(message);
@@ -73,33 +50,22 @@ const Search = () => {
     }, 5000);
   };
 
-  const getDecryptdata = async (data, key) => {
-    const decryptedData = web3.eth.accounts.decrypt(JSON.parse(JSON.stringify(data)), key);
-    console.log('Decrypted Data:', decryptedData.privateKey.slice(2));
-
-    return decryptedData.privateKey.slice(2);
-  };
-
   const setScoreValues = async (subject, encryptedData, key) => {
     var data = [];
     for(let i = 0; i < encryptedData.length; i++) {
       const decryptedData = await getDecryptdata(encryptedData[i], key[i]);
-      console.log('Decrypted Data:', decryptedData);
+      // console.log('Decrypted Data:', decryptedData);
       data.push({subject: subject[i], score: decryptedData});
     }
-    console.log('Data:', data);
     setDisplayData(data);
   }
 
   const handleSearch = async (e) => {
     e.preventDefault();
     
-    console.log('ID:', studentId);
-    console.log('Semester:', semester);
-    console.log('Access Key:', accessKey);
-
-    const userAddress = await getUserAddress();
-    console.log('User address:', userAddress);
+    // console.log('ID:', studentId);
+    // console.log('Semester:', semester);
+    // console.log('Access Key:', accessKey);
 
     setDisplayData('');
     try {
@@ -109,15 +75,13 @@ const Search = () => {
           showErrorMessage(reason);
           console.error('Error:', reason);
         } else {
-          console.log('Scores:', result);
+          // console.log('Scores:', result);
           setScoreValues(result[0], result[1], result[2]);
         }
       });
     } catch(error) {
       console.error('Error:', error);
     }
-    
-    
   };
 
 

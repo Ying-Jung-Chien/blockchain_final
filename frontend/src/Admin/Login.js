@@ -19,6 +19,10 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
 
+  useEffect(() => {
+    getAdminAddress();
+  }, []);
+
   const ethEnabled = () => {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
@@ -42,10 +46,6 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    getAdminAddress();
-  }, []);
-
   const showErrorMessage = (message) => {
     setErrorMessage(message);
   
@@ -56,9 +56,6 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    console.log('Username:', username);
-    console.log('Password:', password);
 
     accountContract.methods.addFirstAdmin(username, password).send({ from: admin })
       .on('transactionHash', function(hash) {

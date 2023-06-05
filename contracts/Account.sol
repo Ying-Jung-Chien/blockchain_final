@@ -104,18 +104,9 @@ contract Account {
     return false;
   }
 
-  // function updateAccountsIPFS(string memory _ipfs) public {
-  //   require(isAdminInList(msg.sender) < adminList.length, "Only admin can update Accounts IPFS");
-  //   accountsIPFS = _ipfs;
-  // }
-
   function getAdminList() view public returns (address[] memory) {
     return adminList;
   }
-
-  // function getAccountsIPFS() view public returns (string memory) {
-  //   return accountsIPFS;
-  // }
 
   function getAdminRemover(address removedAdmin) view public returns (address) {
     return adminRemover[removedAdmin];

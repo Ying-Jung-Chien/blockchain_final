@@ -13,7 +13,7 @@ const SendScore = () => {
   const projectId = process.env.REACT_APP_PROJECT_ID;
   const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
   const authorization = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
-  console.log(projectId, projectSecretKey);
+  // console.log(projectId, projectSecretKey);
 
   const ipfs = ipfsHttpClient({
     url: "https://ipfs.infura.io:5001/api/v0",
@@ -43,8 +43,6 @@ const SendScore = () => {
     const userNow = (await web3.eth.getAccounts())[0];
     const userLogin = localStorage.getItem("user");
     
-    // console.log('userNow:', userNow);
-    // console.log('userLogin:', userLogin);
     if (userNow.toUpperCase() !== userLogin.toUpperCase()) return false;
     return true;
   };
@@ -72,11 +70,9 @@ const SendScore = () => {
           console.error('Error:', error);
           reject(error);
         } else if (!result[3]) {
-          console.log('Account has been removed.');
           showErrorMessage('Account has been removed.');
           reject('Account has been removed.');
         } else {
-          console.log('Address:', result[0]);
           resolve(result[0]);
         }
       });
@@ -91,7 +87,6 @@ const SendScore = () => {
     console.log('currentMonth:', currentMonth);
     const rocYear = currentYear - 1911;
 
-    // 判断所在的学期
     let semester;
     if (currentMonth >= 3 && currentMonth < 9) {
       semester = (rocYear - 1).toString() + '02';
@@ -99,24 +94,15 @@ const SendScore = () => {
       semester = rocYear.toString() + '01';
     }
     console.log('semester:', semester);
-    // setSemester(semester);
     setSemester(semester);
   };
 
   const getEncryptdata = async (score) => {
     const { privateKey, publicKey } = web3.eth.accounts.create();
-    console.log('Private Key:', privateKey);
-
-    // const privateKey = web3.utils.randomHex(32);
-    // console.log('Random:', privateKey, typeof(privateKey));
+    // console.log('Private Key:', privateKey);
 
     const encryptedData = web3.eth.accounts.encrypt(score, privateKey);
-    // const cid = (await ipfs.add(JSON.stringify(encryptedData))).path;
     console.log('Encrypted Data:', JSON.stringify(encryptedData));
-
-
-    // const decryptedData = web3.eth.accounts.decrypt(JSON.parse(JSON.stringify(encryptedData)), privateKey);
-    // console.log('Decrypted Data:', decryptedData.privateKey);
 
     return [JSON.stringify(encryptedData), privateKey];
   };
@@ -124,9 +110,9 @@ const SendScore = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('Subject:', subject);
-    console.log('Student ID:', studentId);
-    console.log('Score:', score);
+    // console.log('Subject:', subject);
+    // console.log('Student ID:', studentId);
+    // console.log('Score:', score);
     
     const result = await checkAccount();
     if (!result) {
@@ -135,14 +121,8 @@ const SendScore = () => {
     } else {
       const user = (await web3.eth.getAccounts())[0];
       const studentAddress = await getStudentAddress();
-      // console.log('User:', typeof(user));
-      console.log('Student Address:', studentAddress);
-
-      // const semester = await getSemester();
-      console.log('Semester:', semester);
 
       const [encryptedData, privateKey] = await getEncryptdata(score);
-      console.log('Encrypted Data:', encryptedData, privateKey);
 
       scoreContract.methods.Store(studentId, subject, "", semester, encryptedData, privateKey, studentAddress).send({ from: user })
       .on('transactionHash', function(hash) {

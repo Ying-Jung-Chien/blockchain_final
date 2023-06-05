@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import ReactDOM from 'react-dom/client';
 import '../index.css';
 import { useEffect } from "react";
 import { useNavigate  } from 'react-router-dom';
@@ -8,8 +7,6 @@ import AccountArtifact from '../abi/contracts/Account.sol/Account.json';
 import contractAddress from '../abi/contracts/Account.sol/contract-address.json';
 import NavBar from '../NavBar';
 
-
-// const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const Home = () => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -62,7 +59,6 @@ const Home = () => {
 
   const handleLogout = () => {
     console.log('Logout');
-    // localStorage.setItem("authenticated", false);
     localStorage.clear();
     navigate('/');
   };
@@ -70,10 +66,10 @@ const Home = () => {
   const handleAddUser = async (e) => {
     e.preventDefault();
 
-    console.log('add user');
-    console.log('Username:', username);
-    console.log('Password:', password);
-    console.log('Role:', role);
+    console.log('handleAddUser');
+    // console.log('Username:', username);
+    // console.log('Password:', password);
+    // console.log('Role:', role);
     
     const result = await checkAccount();
     if (!result) {
@@ -101,10 +97,10 @@ const Home = () => {
   const handleRemoveUser = async (e) => {
     e.preventDefault();
 
-    console.log('remove user');
-    console.log('Username:', username);
-    console.log('Password:', password);
-    console.log('Role:', role);
+    console.log('handleRemoveUser');
+    // console.log('Username:', username);
+    // console.log('Password:', password);
+    // console.log('Role:', role);
     
     const result = await checkAccount();
     if (!result) {
@@ -132,8 +128,6 @@ const Home = () => {
   const handleAddAdmin = async (e) => {
     e.preventDefault();
 
-    console.log('Address:', address);
-
     const result = await checkAccount();
     if (!result) {
       showErrorMessage('Please use the same address as login');
@@ -160,8 +154,6 @@ const Home = () => {
   const handleRemoveAdmin = async (e) => {
     e.preventDefault();
 
-    console.log('Address:', address);
-
     const result = await checkAccount();
     if (!result) {
       showErrorMessage('Please use the same address as login');
@@ -187,20 +179,6 @@ const Home = () => {
 
   return (
     <div>
-      {/* <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button 
-          style={{
-            backgroundColor: 'red',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            padding: '10px',
-            margin: '10px'
-          }}
-          onClick={handleLogout}>
-            Logout
-        </button>
-      </div> */}
       <NavBar handleLogout={handleLogout} id={adminAddress} role={'Admin'} />
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -294,7 +272,6 @@ const Home = () => {
                 type="submit" onClick={handleRemoveAdmin}>Remove Admin</button>
             </div>
           </form>
-
         </div>
       </div>
     </div>

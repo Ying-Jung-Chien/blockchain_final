@@ -19,14 +19,7 @@ contract Score {
     address teacher;
   }
 
-  // struct SignedScore {
-  //   string subject;
-  //   string studentId;
-  //   string ipfsCID;
-  // }
-
   mapping(string => SubjectScore[]) public scores;
-  // mapping(address => SignedScore[]) public signedScores;
 
   Account private account;
   User private user;
@@ -50,7 +43,6 @@ contract Score {
                  string memory key,
                  address student) 
   public {
-
     (, string memory role, , ) = user.getAccountInfoByAddress(msg.sender);
     bool isTeacher = keccak256(bytes(role)) == keccak256(bytes('teacher'));
     require(account.isAdminInList(msg.sender) || isTeacher, "Only admins and teachers can add score");
