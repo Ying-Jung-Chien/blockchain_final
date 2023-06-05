@@ -81,7 +81,7 @@ contract Score {
   function getScoreId(string memory _id,
                             string memory _subject,
                             string memory _semester,
-                            string memory _key) public view returns (uint256) {
+                            string memory _key) private view returns (uint256) {
     for (uint256 i = 0; i < scores[_id].length; i++) {
       if (keccak256(bytes(scores[_id][i].subject)) == keccak256(bytes(_subject)) &&
           keccak256(bytes(scores[_id][i].semester)) == keccak256(bytes(_semester)) &&
@@ -92,12 +92,31 @@ contract Score {
     return scores[_id].length;
   }
 
-  function getScore(string memory _id,
-                    string memory _subject,
-                    string memory _semester,
-                    string memory _key) public view returns (string memory) {
-    uint256 scoreId = getScoreId(_id, _subject, _semester, _key);
-    require(scoreId < scores[_id].length, "Invalid score info");
-    return scores[_id][scoreId].score;
+  function getScoreByAccessKey(string memory _id, string memory _semester, string memory _key) public view returns (string[] memory, string[] memory, string[] memory) {
+    require(user.checkAccessKey(_id, _key), "Invalid student id or access key");
+    SubjectScore[] memory allScores = scores[_id];
+    uint256 [] memory semesterIds = new uint256[](allScores.length);
+
+    uint256 count = 0;
+    for (uint256 i = 0; i < allScores.length; i++) {
+      if (keccak256(bytes(allScores[i].semester)) == keccak256(bytes(_semester))) {
+        semesterIds[count] = i;
+        count++;
+      }
+    }
+
+    require(count > 0, "No score has been added for this semester");
+
+    string[] memory semesterSubjects = new string[](count);
+    string[] memory semesterScores = new string[](count);
+    string[] memory semesterKeys = new string[](count);
+
+    for (uint256 i = 0; i < count; i++) {
+      semesterSubjects[i] = allScores[semesterIds[i]].subject;
+      semesterScores[i] = allScores[semesterIds[i]].score;
+      semesterKeys[i] = allScores[semesterIds[i]].key;
+    }
+
+    return (semesterSubjects, semesterScores, semesterKeys);
   }
 }

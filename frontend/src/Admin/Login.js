@@ -16,6 +16,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstLogin, setfirstLogin] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
 
   const ethEnabled = () => {
@@ -45,6 +46,14 @@ const Login = () => {
     getAdminAddress();
   }, []);
 
+  const showErrorMessage = (message) => {
+    setErrorMessage(message);
+  
+    setTimeout(() => {
+      setErrorMessage('');
+    }, 5000);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     
@@ -62,7 +71,9 @@ const Login = () => {
         console.log('Receipt:', receipt);
       })
       .on('error', function(error) {
-        console.error('Error:', error);
+        const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
+        showErrorMessage(reason);
+        console.log('Error reason:', reason);
       });
   };
 
@@ -70,6 +81,7 @@ const Login = () => {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
+          {errorMessage && <div className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</div>}
           <h2>Login</h2>
           <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onSubmit={handleLogin}>
             <label style={{ textAlign: 'left' }}>

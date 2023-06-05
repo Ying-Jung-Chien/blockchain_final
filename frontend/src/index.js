@@ -6,6 +6,7 @@ import Login from './Login';
 import Logout from './Logout';
 import Home from './Home';
 import SignUp from './SignUp';
+import Search from './Search';
 import AdminLogin from './Admin/Login';
 import AdminHome from './Admin/Home';
 // import reportWebVitals from './reportWebVitals';
@@ -23,6 +24,7 @@ root.render(
       <Route element={<Logout />} path={'/logout'}></Route>
       <Route element={<SignUp />} path={'/sign_up'}></Route>
       <Route element={<Home />} path={'/home'}></Route>
+      <Route element={<Search />} path={'/search'}></Route>
       <Route element={<AdminLogin />} path={'/admin'}></Route>
       <Route element={<AdminHome />} path={'/admin/home'}></Route>
     </Routes>

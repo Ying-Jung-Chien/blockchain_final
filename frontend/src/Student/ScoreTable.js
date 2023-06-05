@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import UserArtifact from '../abi/contracts/User.sol/User.json';
+import userContractAddress from '../abi/contracts/User.sol/contract-address.json';
 import ScoreArtifact from '../abi/contracts/Score.sol/Score.json';
 import scoreContractAddress from '../abi/contracts/Score.sol/contract-address.json';
-import TranscriptArtifact from '../abi/contracts/Transcript.sol/Transcript.json';
-import transcriptContractAddress from '../abi/contracts/Transcript.sol/contract-address.json';
+// import TranscriptArtifact from '../abi/contracts/Transcript.sol/Transcript.json';
+// import transcriptContractAddress from '../abi/contracts/Transcript.sol/contract-address.json';
 import Web3 from 'web3';
 import { Buffer } from "buffer";
 import { create as ipfsHttpClient } from "ipfs-http-client";
@@ -10,8 +12,9 @@ import CryptoJS from 'crypto-js';
 
 function ScoreTable() {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+  const userContract = new web3.eth.Contract(UserArtifact, userContractAddress.User);
   const scoreContract = new web3.eth.Contract(ScoreArtifact, scoreContractAddress.Score);
-  const transcriptContract = new web3.eth.Contract(TranscriptArtifact, transcriptContractAddress.Transcript);
+  // const transcriptContract = new web3.eth.Contract(TranscriptArtifact, transcriptContractAddress.Transcript);
 
   const projectId = process.env.REACT_APP_PROJECT_ID;
   const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
@@ -28,6 +31,7 @@ function ScoreTable() {
 
   const [studentId, setStudentId] = useState('');
   const [scores, setScores] = useState('');
+  const [accessKey, setAccessKey] = useState('');
   const [applySemester, setApplySemester] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -41,6 +45,18 @@ function ScoreTable() {
 
         let score;
         const callerAddress = localStorage.getItem("user");
+
+        await userContract.methods.getAccessKey(id).call({ from: callerAddress }, (error, result) => {
+          if (error) {
+            const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
+            setErrorMessage(reason);
+            console.error('Error:', reason);
+          } else {
+            console.log('AccessKey:', result);
+            setAccessKey(result);
+          }
+        });
+
         await scoreContract.methods.getScoreDetails(id).call({ from: callerAddress }, (error, result) => {
           if (error) {
             const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
@@ -75,6 +91,20 @@ function ScoreTable() {
     setStudentId(id);
     
     if (scores == '' && !stopReload) fetchData();
+    if (scores != '') {
+      scores.sort((a, b) => {
+        const semesterA = parseInt(a.semester);
+        const semesterB = parseInt(b.semester);
+      
+        if (semesterA < semesterB) {
+          return -1;
+        }
+        if (semesterA > semesterB) {
+          return 1;
+        }
+        return 0;
+      });
+    }
   });
 
   const getDecryptdata = async (data, key) => {
@@ -131,6 +161,32 @@ function ScoreTable() {
     console.log('Decrypted Data:', decryptedData);
 
     return [cid, privateKey];
+  };
+
+  const handleChangeAccessKey = (e) => {
+    e.preventDefault();
+    console.log('handleChangeAccessKey');
+
+    const { privateKey, publicKey } = web3.eth.accounts.create();
+    console.log('Private key:', privateKey);
+
+    const userAddress = localStorage.getItem("user");
+
+    userContract.methods.updateAccessKey(privateKey).send({ from: userAddress })
+      .on('transactionHash', function(hash) {
+        console.log('Transaction hash:', hash);
+        setAccessKey(privateKey);
+        showSuccessMessage('Change access key successfully');
+      })
+      .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation number:', confirmationNumber);
+        console.log('Receipt:', receipt);
+      })
+      .on('error', function(error) {
+        const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
+        showErrorMessage(reason);
+        console.log('Error reason:', reason);
+      });
   };
 
   // const sendApply = async (transactionObject) => {
@@ -232,6 +288,31 @@ function ScoreTable() {
               ))}
             </tbody>
           </table>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {successMessage && <div className="success" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>{successMessage}</div>}
+            {errorMessage && <h1 className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</h1>}
+          </div>
+          <table style={{ borderCollapse: 'collapse', width: '80%', marginTop: '40px' }}>
+            <tbody>
+              <tr>
+                <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Access Key</td>
+                <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{accessKey}</td>
+                <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>
+                  <button type="submit"
+                    style={{
+                      backgroundColor: 'blue',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '5px',
+                      padding: '10px',
+                      margin: '10px'
+                    }}
+                    onClick={handleChangeAccessKey}>
+                    Change Access Key</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
           {/* <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               {successMessage && <div className="success">{successMessage}</div>}
@@ -260,7 +341,7 @@ function ScoreTable() {
         </div>
         ) : (
           <div style={{ display: 'flex', justifyContent: 'center' }}>
-            {(errorMessage && <h1 className="error">Error: {errorMessage}</h1>) || (<h1>Loading...</h1>)}
+            {(errorMessage && <h1 className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</h1>) || (<h1>Loading...</h1>)}
           </div>
         ) }
     </div>

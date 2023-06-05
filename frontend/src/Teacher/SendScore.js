@@ -30,11 +30,13 @@ const SendScore = () => {
   const [subject, setSubject] = useState('');
   const [studentId, setStudentId] = useState('');
   const [score, setScore] = useState('');
+  const [semester, setSemester] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     checkAccount();
+    if (semester == '') getSemester();
   });
 
   const checkAccount = async () => {
@@ -98,7 +100,7 @@ const SendScore = () => {
     }
     console.log('semester:', semester);
     // setSemester(semester);
-    return semester;
+    setSemester(semester);
   };
 
   const getEncryptdata = async (score) => {
@@ -136,7 +138,7 @@ const SendScore = () => {
       // console.log('User:', typeof(user));
       console.log('Student Address:', studentAddress);
 
-      const semester = await getSemester();
+      // const semester = await getSemester();
       console.log('Semester:', semester);
 
       const [encryptedData, privateKey] = await getEncryptdata(score);
@@ -162,8 +164,8 @@ const SendScore = () => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        {successMessage && <div className="success">{successMessage}</div>}
-        {errorMessage && <div className="error">Error: {errorMessage}</div>}
+        {successMessage && <div className="success" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>{successMessage}</div>}
+        {errorMessage && <div className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</div>}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -174,6 +176,13 @@ const SendScore = () => {
               Subject:
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <label style={{ textAlign: 'left' }}>
+              Semester:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={semester} onChange={(e) => setSemester(e.target.value)} />
               </div>
             </label>
             <br />

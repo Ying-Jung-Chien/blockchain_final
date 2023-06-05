@@ -11,6 +11,7 @@ contract User {
     string _id;
     string role;
     string infoIPFS;
+    string accessKey;
     address _address;
     bool isExist;
   }
@@ -35,7 +36,7 @@ contract User {
   function blindAccount(string memory _name, string memory _password, string memory _role) public {
     require(!isBound(msg.sender), "The account has been bound to the wallet");
     require(account.isAccountCorrect(_name, _password, _role), "Invalid credentials");
-    addressToAccount[msg.sender] = AccountInfo("", _role, "", msg.sender, true);
+    addressToAccount[msg.sender] = AccountInfo("", _role, "", "", msg.sender, true);
     account.removeUsedAccount(_name, _password, _role);
     // boundAccountsList.push(msg.sender);
   }
@@ -46,6 +47,18 @@ contract User {
     addressToAccount[msg.sender]._id = _id;
     addressToAccount[msg.sender].infoIPFS = infoIPFS;
     idToAccount[_id] = addressToAccount[msg.sender];
+  }
+
+  function updateAccessKey(string memory accessKey) public {
+    require(isBound(msg.sender), "The account has not been bound to the wallet");
+    require(msg.sender == addressToAccount[msg.sender]._address, "Only the account owner can update the account info");
+    
+    addressToAccount[msg.sender].accessKey = accessKey;
+  }
+
+  function checkAccessKey(string memory _id, string memory accessKey) public view returns (bool) {
+    require(idToAccount[_id]._address != address(0), "The account has not been bound to the wallet");
+    return keccak256(bytes(idToAccount[_id].accessKey)) == keccak256(bytes(accessKey));
   }
 
   function removeAccount(address accountAddress) public {
@@ -62,5 +75,11 @@ contract User {
   function getAccountInfoById(string memory _id) public view returns (address, string memory, string memory, bool) {
     require(idToAccount[_id]._address != address(0), "The account has not been bound to the wallet");
     return (idToAccount[_id]._address, idToAccount[_id].role, idToAccount[_id].infoIPFS, idToAccount[_id].isExist);
+  }
+
+  function getAccessKey(string memory _id) public view returns (string memory) {
+    require(idToAccount[_id]._address != address(0), "The account has not been bound to the wallet");
+    require(idToAccount[_id]._address == msg.sender, "Only the account owner can get the access key");
+    return (idToAccount[_id].accessKey);
   }
 }

@@ -30,6 +30,10 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   // const [ipfsCid, setIpfsCid] = useState('');
 
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("authenticated");
+    if (loggedInUser === 'false') navigate('/');
+  });
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -44,6 +48,22 @@ const SignUp = () => {
     console.log('CID:', cid);
 
     const userAddress = localStorage.getItem("user");
+    
+    if(localStorage.getItem("role") === "student") {
+      const { privateKey, publicKey } = web3.eth.accounts.create();
+
+      userContract.methods.updateAccessKey(privateKey).send({ from: userAddress })
+      .on('transactionHash', function(hash) {
+        console.log('Transaction hash:', hash);
+      })
+      .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation number:', confirmationNumber);
+        console.log('Receipt:', receipt);
+      })
+      .on('error', function(error) {
+        console.error('Error:', error);
+      });
+    }
     
     userContract.methods.updateAccountInfo(ID, cid).send({ from: userAddress })
       .on('transactionHash', function(hash) {
@@ -61,26 +81,42 @@ const SignUp = () => {
 
   
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSignUp}>
-        <label>
-          Name:
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Id:
-          <input type="text" value={ID} onChange={(e) => setId(e.target.value)} />
-        </label>
-        <br />
-        <label>
-          Email:
-          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
-        </label>
-        <br />
-        <button type="submit">Sign Up</button>
-      </form>
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
+      <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
+        <h2>Sign Up</h2>
+        <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onSubmit={handleSignUp}>
+          <label style={{ textAlign: 'left' }}>
+            Name:
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </div>
+          </label>
+          <br />
+          <label style={{ textAlign: 'left' }}>
+            Id:
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <input type="text" value={ID} onChange={(e) => setId(e.target.value)} />
+            </div>
+          </label>
+          <br />
+          <label style={{ textAlign: 'left' }}>
+            Email:
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+          </label>
+          <br />
+          <button
+            style={{
+              backgroundColor: 'blue',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              padding: '10px',
+              marginRight: '10px',
+            }} type="submit">Sign Up</button>
+        </form>
+      </div>
     </div>
   );
 };
