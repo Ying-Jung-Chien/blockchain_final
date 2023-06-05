@@ -79,7 +79,7 @@ const Login = () => {
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
           {errorMessage && <div className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</div>}
-          <h2>Login</h2>
+          <h2>Admin Login</h2>
           <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onSubmit={handleLogin}>
             <label style={{ textAlign: 'left' }}>
               Username:

@@ -4,13 +4,16 @@ import { useEffect } from "react";
 import { useNavigate  } from 'react-router-dom';
 import Web3 from 'web3';
 import AccountArtifact from '../abi/contracts/Account.sol/Account.json';
-import contractAddress from '../abi/contracts/Account.sol/contract-address.json';
+import accountContractAddress from '../abi/contracts/Account.sol/contract-address.json';
+import UserArtifact from '../abi/contracts/User.sol/User.json';
+import userContractAddress from '../abi/contracts/User.sol/contract-address.json';
 import NavBar from '../NavBar';
 
 
 const Home = () => {
   const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-  const accountContract = new web3.eth.Contract(AccountArtifact, contractAddress.Account);
+  const accountContract = new web3.eth.Contract(AccountArtifact, accountContractAddress.Account);
+  const userContract = new web3.eth.Contract(UserArtifact, userContractAddress.User);
 
   const navigate = useNavigate();
 
@@ -19,6 +22,7 @@ const Home = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('teacher');
   const [address, setAddress] = useState('');
+  const [removeAddress, setRemoveAddress] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -108,10 +112,10 @@ const Home = () => {
       return;
     } else {
       const user = (await web3.eth.getAccounts())[0];
-      accountContract.methods.removeUsedAccount(username, password, role).send({ from: user })
+      userContract.methods.removeAccount(removeAddress).send({ from: user })
       .on('transactionHash', function(hash) {
         console.log('Transaction hash:', hash);
-        showSuccessMessage('Remove user successfully');
+        showSuccessMessage('Remove account successfully');
       })
       .on('confirmation', function(confirmationNumber, receipt) {
         console.log('Confirmation number:', confirmationNumber);
@@ -138,6 +142,32 @@ const Home = () => {
       .on('transactionHash', function(hash) {
         console.log('Transaction hash:', hash);
         showSuccessMessage('Add admin successfully');
+      })
+      .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation number:', confirmationNumber);
+        console.log('Receipt:', receipt);
+      })
+      .on('error', function(error) {
+        const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
+        showErrorMessage(reason);
+        console.log('Error reason:', reason);
+      });
+    }
+  };
+
+  const handleRemoveUnusedUser = async (e) => {
+    e.preventDefault();
+
+    const result = await checkAccount();
+    if (!result) {
+      showErrorMessage('Please use the same address as login');
+      return;
+    } else {
+      const user = (await web3.eth.getAccounts())[0];
+      accountContract.methods.removeAdmin(address).send({ from: user })
+      .on('transactionHash', function(hash) {
+        console.log('Transaction hash:', hash);
+        showSuccessMessage('Remove admin successfully');
       })
       .on('confirmation', function(confirmationNumber, receipt) {
         console.log('Confirmation number:', confirmationNumber);
@@ -187,9 +217,9 @@ const Home = () => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
-          <h2>Add New User</h2>
-          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h2 style={{ alignSelf: 'center' }}>Add New User</h2>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <label style={{ textAlign: 'left' }}>
               Username:
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -207,7 +237,7 @@ const Home = () => {
             <label style={{ textAlign: 'left' }}>
               Role:
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <select style={{ width: '150px' }} value={role} onChange={(e) => setRole(e.target.value)}>
+                <select style={{ width: '180px' }} value={role} onChange={(e) => setRole(e.target.value)}>
                   <option value="teacher">teacher</option>
                   <option value="student">student</option>
                 </select>
@@ -234,14 +264,14 @@ const Home = () => {
                   padding: '10px',
                   marginLeft: '10px',
                 }}
-                type="submit" onClick={handleRemoveUser}>Remove User</button>
+                type="submit" onClick={handleRemoveUnusedUser}>Remove Unused User</button>
             </div>
           </form>
         </div>
 
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
           <h2>Add New Admin</h2>
-          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <label style={{ textAlign: 'left' }}>
               Address:
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -270,6 +300,31 @@ const Home = () => {
                   marginLeft: '10px',
                 }}
                 type="submit" onClick={handleRemoveAdmin}>Remove Admin</button>
+            </div>
+          </form>
+        </div>
+
+        <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <h2 style={{ alignSelf: 'center' }}>Remove Account</h2>
+          <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <label style={{ textAlign: 'left' }}>
+              Account Address:
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <input type="text" value={removeAddress} onChange={(e) => setRemoveAddress(e.target.value)} />
+              </div>
+            </label>
+            <br />
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                style={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '5px',
+                  padding: '10px',
+                  marginLeft: '10px',
+                }}
+                type="submit" onClick={handleRemoveUser}>Remove User</button>
             </div>
           </form>
         </div>

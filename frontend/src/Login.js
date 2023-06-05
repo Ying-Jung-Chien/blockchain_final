@@ -65,11 +65,11 @@ const Login = () => {
             localStorage.setItem('role', result[1]);
           }
         });
+      } else {
+        setFirstLogin(!isBound);
       }
-  
       setUserAddress(userAddress);
       localStorage.setItem('user', userAddress);
-      setFirstLogin(!isBound);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -117,7 +117,7 @@ const Login = () => {
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '200px' }}>
         <div style={{ marginRight: '20px', border: '1px solid black', padding: '20px', margin: '10px' }}>
           {errorMessage && <div className="error" style={{color: 'red', fontWeight: 'bold', fontSize: '16px'}}>Error: {errorMessage}</div>}
-          <h2>Login</h2>
+          <h2>User Login</h2>
           <form style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }} onSubmit={handleLogin}>
             <label style={{ textAlign: 'left' }}>
               Username:
@@ -157,9 +157,15 @@ const Login = () => {
         </div>
       </div>
     );
-  } else {
+  } else if (firstLogin == false){
     localStorage.setItem("authenticated", true);
     navigate('/home');
+  } else {
+    return (
+      <h1 style={{ display: 'flex', justifyContent: 'center' }}>
+        Loading...
+      </h1>
+    );
   }
 };
 

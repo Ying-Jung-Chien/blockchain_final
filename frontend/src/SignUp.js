@@ -31,6 +31,7 @@ const SignUp = () => {
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("authenticated");
+    console.log('Logged in user:', loggedInUser);
     if (loggedInUser === 'false') navigate('/');
   });
 
@@ -64,6 +65,7 @@ const SignUp = () => {
       });
     }
     
+    localStorage.setItem('ID', ID);
     userContract.methods.updateAccountInfo(ID, cid).send({ from: userAddress })
       .on('transactionHash', function(hash) {
         console.log('Transaction hash:', hash);

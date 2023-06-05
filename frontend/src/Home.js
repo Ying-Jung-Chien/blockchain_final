@@ -15,7 +15,8 @@ const Home = () => {
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("authenticated");
-    if (loggedInUser === 'false') navigate('/');
+    console.log('loggedInUser:', localStorage.getItem("ID"));
+    // if (loggedInUser === 'false') navigate('/');
     setRole(localStorage.getItem("role"));
     setID(localStorage.getItem("ID"));
 
@@ -23,6 +24,7 @@ const Home = () => {
       if (role !== previousValue && role !== null && ID !== null) {
         clearInterval(intervalId);
       } else {
+        console.log('Reloading...');
         window.location.reload();
       }
     }, 1000);
@@ -39,14 +41,14 @@ const Home = () => {
   };
 
 
-  if (role === 'teacher') {
+  if (role === 'teacher' && ID !== '') {
     return (
       <div>
         <NavBar handleLogout={handleLogout} id={ID} role={'Teacher'} />
         <SendScore />
       </div>
     );
-  } else if (role === 'student') {
+  } else if (role === 'student' && ID !== '') {
     return (
       <div>
         <NavBar handleLogout={handleLogout} id={ID} role={'Student'} />
