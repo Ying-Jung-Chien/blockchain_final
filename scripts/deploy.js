@@ -63,23 +63,6 @@ async function main() {
   };
 
   fs.writeFileSync('./frontend/src/abi/contracts/Transcript.sol/contract-address.json', JSON.stringify(data, null, 2));
-
-  // const isbound = process.env.PREPARE_BINDING;
-  // console.log('isbound:', isbound);
-  // if (isbound === 'true') {
-  //   const admin = process.env.ADMIN_ADDRESS;
-  //   const teacher = process.env.TEACHER_ADDRESS;
-  //   const student = process.env.STUDENT_ADDRESS;
-    
-  //   await account.connect(admin).addFirstAdmin(username, password);
-  //   await account.connect(admin).addNewAccount('user1', 'password1', 'teacher');
-  //   await account.connect(admin).addNewAccount('user2', 'password2', 'student');
-
-  //   await user.connect(teacher).blindAccount('user1', 'password1', 'teacher');
-  //   await user.connect(teacher).updateAccountInfo('11406123', 'test');
-  //   await user.connect(student).blindAccount('user2', 'password1', 'student');
-  //   await user.connect(student).updateAccountInfo('108101234', 'test');
-  // }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
