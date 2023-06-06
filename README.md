@@ -1,4 +1,4 @@
-# HW8
+# Final
 
 ## 準備
 1. 申請 [IPFS key](https://www.infura.io/product/ipfs?utm_content=sitelink&utm_source=google&utm_medium=paidsearch&utm_campaign=Infura-Search-APAC-en-Brand-PHR&utm_term=infura%20ipfs&gad=1&gclid=CjwKCAjwpayjBhAnEiwA-7ena51bqKSS4Yf1ZaChV_79qPTmtTCYHLbNxEQTSuSGBT7qT4WDi5NOXRoCfkQQAvD_BwE)
@@ -7,29 +7,36 @@
    REACT_APP_PROJECT_ID=[your API KEY]
    REACT_APP_PROJECT_SECRET=[your API KEY SECRET]
    ```
-3. install: `npm install`
+3. install (`/` and `/front`): `npm install`
 4. backend:
-    - `npx hardhat node`
+    - `npx hardhat node` (會產生 20 組 wallet 後續測試可用)
     - `npx hardhat run scripts/deploy.js --network localhost`
-    - 將終端機印出的三個地址，分別更改到 `frontend/src/abi/contracts/Account.sol(Score.sol, Transcript.sol)/contract-address.json`
     - `npx hardhat export-abi`
 5. frontend:
     - cd frontend
     - `yarn start`
+6. metamask:
+    - `npx hardhat node` 會產生 20 組 wallet address/ private key
+    - 點擊頭像 -> 匯入私鑰，即可新增測試用的 account
 
-## 說明
-
-1. deploy 的時候會有三組帳號，如下:
-    ```
-    [
-    { username: "user1", password: "password1", role: "admin", id: "012345" },
-    { username: "user2", password: "password2", role: "teacher", id: "123456" },
-    { username: "user3", password: "password3", role: "student", id: "234567" },
-    ]
-    ```
-2. teacher 可以給 student 評分，student 收到評分後可以申請成績單，admin 會審查申請是否符合標準
-3. 打開 `http://localhost:3000` 後會需要登入，測試流程如下:
-
-    1. 先用 `username: "user2", password: "password2"` 登入，並且輸入課程名稱，學生學號(234567)及分數後送出，此處可新增多筆
-    2. 登入 `username: "user3", password: "password3"`，按下 `Apply Transcript` 按鈕
-    3. 登入 `username: "user1", password: "password1"`，會顯示原始資料，並且驗證 teacher 的簽名，admin 可以按下通過或拒絕申請的按鈕。(此部分 smart contract 已寫好，但來不及接前端)
+## 流程說明
+*[介面顯示](https://docs.google.com/presentation/d/1HBRwTv65NyT9jDvwYVO95Xm_Nft_TiLRuIDa8iBr5cw/edit?usp=sharing)*
+1. `localhost:3000/admin` : 以 `username: admin password: root12345` 登入，此時會綁定正在使用的 wallet address，未來登入時使用同個 wallet 即可
+2. `localhost:3000/admin/home` : 
+   1.  可以使用 `{[username: user1, password: password1, role: teacher], [username: user2, password: password2, role: student]}` 加入 user
+   2.  還未綁定的帳號可用同一個 form 刪除
+   3.  以 address 的方式加入其他 admin (其他 admin 用這個 wallet 即可直接登入)
+   4.  可用 address 的方式刪除已綁定的 user
+   5.  `Logout` 按鈕登出
+3. `localhost:3000` : 
+   1. 換一個新的 wallet 
+   2. 以上面的加入的帳號登入
+4. `localhost:3000/sign_up` : 
+   1. 第一次成功登入後會需要填寫基本資料
+   2. 可隨意填寫，但需要記住 student 的 Id
+5. `localhost:3000/home` : 
+   1. teacher: 表格可填寫科目、學期、student id、分數並送出，需要注意的是學生必須先登入綁定過 wallet
+   2. student: 可以看到老師送出的成績資訊，以及 access key，access key 是用來給其他人查看成績的權限，並且可更新
+6. `localhost:3000/search` :
+   1. 任意人皆可到這個頁面
+   2. 使用 student id, access key 即可得到該學生在某學期的成績
