@@ -2,8 +2,24 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "_accountAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_userAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
-        "name": "studentID",
+        "name": "_id",
         "type": "string"
       },
       {
@@ -15,6 +31,26 @@
         "internalType": "string",
         "name": "ipfsCID",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "semester",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "score",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "student",
+        "type": "address"
       }
     ],
     "name": "Store",
@@ -26,7 +62,46 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "studentID",
+        "name": "_id",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_semester",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_key",
+        "type": "string"
+      }
+    ],
+    "name": "getScoreByAccessKey",
+    "outputs": [
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      },
+      {
+        "internalType": "string[]",
+        "name": "",
+        "type": "string[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_id",
         "type": "string"
       }
     ],
@@ -36,7 +111,17 @@
         "components": [
           {
             "internalType": "string",
+            "name": "_id",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
             "name": "subject",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "semester",
             "type": "string"
           },
           {
@@ -45,8 +130,23 @@
             "type": "string"
           },
           {
+            "internalType": "string",
+            "name": "score",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "key",
+            "type": "string"
+          },
+          {
             "internalType": "address",
-            "name": "signer",
+            "name": "student",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "teacher",
             "type": "address"
           }
         ],
@@ -75,7 +175,17 @@
     "outputs": [
       {
         "internalType": "string",
+        "name": "_id",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "subject",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "semester",
         "type": "string"
       },
       {
@@ -84,8 +194,23 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "score",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "key",
+        "type": "string"
+      },
+      {
         "internalType": "address",
-        "name": "signer",
+        "name": "student",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "teacher",
         "type": "address"
       }
     ],
@@ -96,34 +221,13 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "_transcriptAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
-    "name": "signedScores",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "subject",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "studentId",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "ipfsCID",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "setTranscriptContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

@@ -1,50 +1,65 @@
-import React from 'react';
-// import ReactDOM from 'react-dom/client';
+import React, { useState } from 'react';
 import './index.css';
-import SendScore from './SendScore';
-import ScoreTable from './ScoreTable';
-import Review from './Review';
+import SendScore from './Teacher/SendScore';
+import ScoreTable from './Student/ScoreTable';
+import NavBar from './NavBar';
 import { useEffect } from "react";
 import { useNavigate  } from 'react-router-dom';
 
 
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-
 const Home = () => {
   const navigate = useNavigate();
+  const [role, setRole] = useState('');
+  const [ID, setID] = useState('');
+  const [previousValue, setPreviousValue] = useState('');
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("authenticated");
+    console.log('loggedInUser:', localStorage.getItem("ID"));
     if (loggedInUser === 'false') navigate('/');
-  }, []);
+    setRole(localStorage.getItem("role"));
+    setID(localStorage.getItem("ID"));
+
+    const intervalId = setInterval(() => {
+      if (role !== previousValue && role !== null && ID !== null) {
+        clearInterval(intervalId);
+      } else {
+        console.log('Reloading...');
+        window.location.reload();
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(intervalId); // 组件卸载时清除定时器
+    };
+  }, [role]);
 
   const handleLogout = () => {
     console.log('Logout');
-    localStorage.setItem("authenticated", false);
-    navigate('/');
+    localStorage.clear();
+    navigate('/logout');
   };
 
 
-  if (localStorage.getItem("role") === 'teacher') {
+  if (role === 'teacher' && ID !== '') {
     return (
       <div>
+        <NavBar handleLogout={handleLogout} id={ID} role={'Teacher'} />
         <SendScore />
-        <button onClick={handleLogout}>Logout</button>
       </div>
     );
-  } else if (localStorage.getItem("role") === 'admin') {
+  } else if (role === 'student' && ID !== '') {
     return (
       <div>
-        <Review />
-        <button onClick={handleLogout}>Logout</button>
+        <NavBar handleLogout={handleLogout} id={ID} role={'Student'} />
+        <ScoreTable />
       </div>
     );
   } else {
     return (
-      <div>
-        <ScoreTable />
-        <button onClick={handleLogout}>Logout</button>
-      </div>
+      <h1 style={{ display: 'flex', justifyContent: 'center' }}>
+        Loading...
+      </h1>
     );
   }
 }

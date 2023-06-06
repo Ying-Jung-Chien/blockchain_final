@@ -5,70 +5,64 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const IPFS = require('ipfs-http-client');
+const fs = require('fs');
 require('dotenv').config();
 
-// async function main() {
-//   const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-//   const unlockTime = currentTimestampInSeconds + 60;
-
-//   const lockedAmount = hre.ethers.utils.parseEther("0.001");
-
-//   const Lock = await hre.ethers.getContractFactory("Lock");
-//   const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-//   await lock.deployed();
-
-//   console.log(
-//     `Lock with ${ethers.utils.formatEther(
-//       lockedAmount
-//     )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-//   );
-// }
-
-// // We recommend this pattern to be able to use async/await everywhere
-// // and properly handle errors.
-// main().catch((error) => {
-//   console.error(error);
-//   process.exitCode = 1;
-// });
 
 async function main() {
-  const accounts = [
-    { username: "user1", password: "password1", role: "admin", id: "012345" },
-    { username: "user2", password: "password2", role: "teacher", id: "123456" },
-    { username: "user3", password: "password3", role: "student", id: "234567" },
-  ];
+  const inspector = process.env.INSPECTOR_ADDRESS;
+  console.log('inspector:', inspector);
 
-  const projectId = process.env.REACT_APP_PROJECT_ID;
-  const projectSecretKey = process.env.REACT_APP_PROJECT_SECRET;
-  const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecretKey).toString('base64');
-  
-  const ipfs = IPFS.create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    headers: {
-      authorization: auth,
-    }
-  });
-  const cid = await ipfs.add(JSON.stringify(accounts));
-  // console.log(typeof(cid.path));
+  const username = "admin";
+  const password = "root12345";
 
   const Account = await hre.ethers.getContractFactory("Account");
-  const account = await Account.deploy(cid.path);
+  const account = await Account.deploy(username, password);
   await account.deployed();
-  console.log(account.address);
+  console.log('account address:', account.address);
+
+  var data = {
+    Account: account.address,
+  };
+
+  fs.writeFileSync('./frontend/src/abi/contracts/Account.sol/contract-address.json', JSON.stringify(data, null, 2));
+
+  const User = await hre.ethers.getContractFactory("User");
+  const user = await User.deploy(account.address);
+  await user.deployed();
+  console.log('user address:', user.address);
+
+  data = {
+    User: user.address,
+  };
+
+  fs.writeFileSync('./frontend/src/abi/contracts/User.sol/contract-address.json', JSON.stringify(data, null, 2));
+
+  await account.setUserContract(user.address);
 
   const Score = await hre.ethers.getContractFactory("Score");
-  const score = await Score.deploy();
+  const score = await Score.deploy(account.address, user.address);
   await score.deployed();
-  console.log(score.address);
+  console.log('score address:', score.address);
+
+  data = {
+    Score: score.address,
+  };
+
+  fs.writeFileSync('./frontend/src/abi/contracts/Score.sol/contract-address.json', JSON.stringify(data, null, 2));
 
   const Transcript = await hre.ethers.getContractFactory("Transcript");
-  const transcript = await Transcript.deploy();
+  const transcript = await Transcript.deploy(account.address, user.address, score.address, inspector);
   await transcript.deployed();
-  console.log(transcript.address);
+  console.log('transcript address:', transcript.address);
+
+  await score.setTranscriptContract(transcript.address);
+
+  data = {
+    Transcript: transcript.address,
+  };
+
+  fs.writeFileSync('./frontend/src/abi/contracts/Transcript.sol/contract-address.json', JSON.stringify(data, null, 2));
 }
 
 // We recommend this pattern to be able to use async/await everywhere
