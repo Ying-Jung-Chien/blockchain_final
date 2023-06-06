@@ -45,7 +45,10 @@ function ScoreTable() {
         await userContract.methods.getAccessKey(id).call({ from: callerAddress }, (error, result) => {
           if (error) {
             const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
-            setErrorMessage(reason);
+            var message = '';
+            if (errorMessage !== '') message = errorMessage + '\n' + reason;
+            else message = reason;
+            setErrorMessage(message);
             console.error('Error:', reason);
           } else {
             console.log('AccessKey:', result);
@@ -56,7 +59,10 @@ function ScoreTable() {
         await scoreContract.methods.getScoreDetails(id).call({ from: callerAddress }, (error, result) => {
           if (error) {
             const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
-            setErrorMessage(reason);
+            var message = '';
+            if (errorMessage !== '') message = errorMessage + '\n' + reason;
+            else message = reason;
+            setErrorMessage(message);
             console.error('Error:', reason);
           } else {
             score = result;

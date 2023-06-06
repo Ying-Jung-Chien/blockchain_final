@@ -98,6 +98,34 @@ const Home = () => {
     }
   };
 
+  const handleRemoveUnusedUser = async (e) => {
+    e.preventDefault();
+    console.log('handleRemoveUnusedUser');
+
+    const result = await checkAccount();
+    if (!result) {
+      showErrorMessage('Please use the same address as login');
+      return;
+    } else {
+      const user = (await web3.eth.getAccounts())[0];
+      console.log('user:', user);
+      accountContract.methods.removeUsedAccount(username, password, role).send({ from: user })
+      .on('transactionHash', function(hash) {
+        console.log('Transaction hash:', hash);
+        showSuccessMessage('Remove admin successfully');
+      })
+      .on('confirmation', function(confirmationNumber, receipt) {
+        console.log('Confirmation number:', confirmationNumber);
+        console.log('Receipt:', receipt);
+      })
+      .on('error', function(error) {
+        const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
+        showErrorMessage(reason);
+        console.log('Error reason:', reason);
+      });
+    }
+  };
+
   const handleRemoveUser = async (e) => {
     e.preventDefault();
 
@@ -142,32 +170,6 @@ const Home = () => {
       .on('transactionHash', function(hash) {
         console.log('Transaction hash:', hash);
         showSuccessMessage('Add admin successfully');
-      })
-      .on('confirmation', function(confirmationNumber, receipt) {
-        console.log('Confirmation number:', confirmationNumber);
-        console.log('Receipt:', receipt);
-      })
-      .on('error', function(error) {
-        const reason = (error.message.match(/reverted with reason string '(.*?)'/) || error.message.split(': '))[1];
-        showErrorMessage(reason);
-        console.log('Error reason:', reason);
-      });
-    }
-  };
-
-  const handleRemoveUnusedUser = async (e) => {
-    e.preventDefault();
-
-    const result = await checkAccount();
-    if (!result) {
-      showErrorMessage('Please use the same address as login');
-      return;
-    } else {
-      const user = (await web3.eth.getAccounts())[0];
-      accountContract.methods.removeAdmin(address).send({ from: user })
-      .on('transactionHash', function(hash) {
-        console.log('Transaction hash:', hash);
-        showSuccessMessage('Remove admin successfully');
       })
       .on('confirmation', function(confirmationNumber, receipt) {
         console.log('Confirmation number:', confirmationNumber);

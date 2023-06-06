@@ -16,7 +16,7 @@ const Home = () => {
   useEffect(() => {
     const loggedInUser = localStorage.getItem("authenticated");
     console.log('loggedInUser:', localStorage.getItem("ID"));
-    // if (loggedInUser === 'false') navigate('/');
+    if (loggedInUser === 'false') navigate('/');
     setRole(localStorage.getItem("role"));
     setID(localStorage.getItem("ID"));
 
